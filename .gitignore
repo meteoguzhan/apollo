@@ -1,1 +1,6 @@
+/.idea
 /.env
+/global-bundle.pem
+/package-lock.json
+/dist
+/node_modules
