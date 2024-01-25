@@ -36,6 +36,7 @@ const getErrorMessage = (errorCode: number): string => {
         1009: "Invalid value or date!",
         1010: "Invalid date!",
         1011: "Consumption list not found!",
+        1012: "Cannot be negative value!",
 
         // Unauthorized
         2000: "Authentication required",

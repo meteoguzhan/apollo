@@ -15,6 +15,10 @@ export default class IndexController implements IndexControllerInterface {
 
             const { indexValue, date } = req.body
 
+            if (indexValue < 0) {
+                return sendErrorResponse(res, 1012)
+            }
+
             const createIndex: boolean = await IndexService.addIndex(indexValue, date, req.user)
             if (!createIndex) {
                 return sendErrorResponse(res, 1005)
