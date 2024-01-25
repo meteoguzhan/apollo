@@ -1,6 +1,6 @@
 # Apollo
 ## Project Details
-### Amazon
+### AWS
 <pre>
 http://apollo-iot.eba-vhyi2hmd.eu-central-1.elasticbeanstalk.com
 </pre>
