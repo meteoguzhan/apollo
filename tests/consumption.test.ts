@@ -15,15 +15,7 @@ describe('consumption test', () => {
   let authToken: string;
   let authUser: UserInterface;
 
-  beforeAll(async () => {
-    appServer = await app(3002);
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
-  });
-
-  afterEach(async () => {
-    await mongoose.connection.dropDatabase();
-
+  const generateAuthTokenAndUser = async () => {
     const testUser = {
       email: 'test@example.com',
       password: await bcrypt.hash('password', 10),
@@ -32,10 +24,24 @@ describe('consumption test', () => {
 
     const user = await new UserModel(testUser).save();
     const token = authService.generateToken(user);
-    if (token) {
-      authUser = user;
-      authToken = token;
+
+    if (!token) {
+      throw new Error('Failed to generate authentication token');
     }
+
+    authUser = user;
+    authToken = token;
+  };
+
+  beforeAll(async () => {
+    appServer = await app(3002);
+    mongoServer = await MongoMemoryServer.create();
+    await mongoose.connect(mongoServer.getUri());
+  });
+
+  beforeEach(async () => {
+    await mongoose.connection.dropDatabase();
+    await generateAuthTokenAndUser();
   });
 
   afterAll(async () => {
@@ -63,8 +69,8 @@ describe('consumption test', () => {
 
       const res = await request(appServer).get('/consumption').set('Authorization', authToken);
       expect(res.status).toBe(200);
-      const body: SuccessResponse = res.body as SuccessResponse;
 
+      const body: SuccessResponse = res.body as SuccessResponse;
       const dataArray = body.data as Array<{ date: string; consumption: number }>;
 
       expect(dataArray).toHaveLength(2);

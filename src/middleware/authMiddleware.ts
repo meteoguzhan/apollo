@@ -9,6 +9,11 @@ declare module 'express' {
   }
 }
 
+enum StatusCode {
+  MissingToken = 2000,
+  InvalidToken = 2001,
+}
+
 export default class AuthMiddleware {
   authenticate: RequestHandler = async (
     req: Request,
@@ -17,24 +22,26 @@ export default class AuthMiddleware {
   ): Promise<void> => {
     const token: string | undefined = req.header('Authorization');
     if (!token) {
-      return sendErrorResponse(res, 2000);
+      return sendErrorResponse(res, StatusCode.MissingToken);
     }
 
     try {
-      const isUser: false | UserInterface = authService.verifyToken(token);
-      if (isUser === false) {
-        return sendErrorResponse(res, 2001);
+      const isUser = authService.verifyToken(token);
+      if (!isUser) {
+        return sendErrorResponse(res, StatusCode.InvalidToken);
       }
 
       const user = await UserModel.findOne({ email: isUser.email });
       if (!user) {
-        return sendErrorResponse(res, 2001);
+        return sendErrorResponse(res, StatusCode.InvalidToken);
       }
 
       req.user = user;
       next();
     } catch (error) {
-      return sendErrorResponse(res, 2000);
+      // Log detailed error information for debugging
+      console.error(error);
+      return sendErrorResponse(res, StatusCode.MissingToken);
     }
   };
 }

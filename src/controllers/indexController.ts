@@ -14,16 +14,19 @@ export default class IndexController implements IndexControllerInterface {
     try {
       const { indexValue, date }: IndexRequest = req.body as IndexRequest;
 
-      const createIndex: boolean = await IndexService.addIndex(indexValue, date, req.user);
+      const createIndex = await IndexService.addIndex(indexValue, date, req.user);
       if (!createIndex) {
         return sendErrorResponse(res, 1005);
       }
 
       return sendSuccessResponse(res, 1003);
     } catch (error) {
+      // Log detailed error information for debugging
+      console.error(error);
       return sendErrorResponse(res, 500);
     }
   };
+
   delete: RequestHandler = async (
     req: Request & { body: AuthRequest },
     res: Response,
@@ -36,13 +39,15 @@ export default class IndexController implements IndexControllerInterface {
         return sendErrorResponse(res, 1006);
       }
 
-      const calculateConsumption: boolean = await IndexService.calculateConsumption(req.user);
+      const calculateConsumption = await IndexService.calculateConsumption(req.user);
       if (!calculateConsumption) {
         return sendErrorResponse(res, 1007);
       }
 
       return sendSuccessResponse(res, 1004);
     } catch (error) {
+      // Log detailed error information for debugging
+      console.error(error);
       return sendErrorResponse(res, 500);
     }
   };

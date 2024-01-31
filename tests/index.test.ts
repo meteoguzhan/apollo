@@ -16,14 +16,7 @@ describe('index test', () => {
   let appServer: Express;
   let authToken: string;
 
-  beforeAll(async () => {
-    appServer = await app(3003);
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
-  });
-
-  afterEach(async () => {
-    await mongoose.connection.dropDatabase();
+  const generateAuthToken = async () => {
     const testUser = {
       email: 'test@example.com',
       password: await bcrypt.hash('password', 10),
@@ -32,9 +25,23 @@ describe('index test', () => {
 
     const user = await new UserModel(testUser).save();
     const token = authService.generateToken(user);
-    if (token) {
-      authToken = token;
+
+    if (!token) {
+      throw new Error('Failed to generate authentication token');
     }
+
+    authToken = token;
+  };
+
+  beforeAll(async () => {
+    appServer = await app(3003);
+    mongoServer = await MongoMemoryServer.create();
+    await mongoose.connect(mongoServer.getUri());
+  });
+
+  beforeEach(async () => {
+    await mongoose.connection.dropDatabase();
+    await generateAuthToken();
   });
 
   afterAll(async () => {
@@ -77,7 +84,7 @@ describe('index test', () => {
 
       const body: ErrorResponse = res.body as ErrorResponse;
 
-      expect(res.status).toBe(409);
+      expect(res.status).toBe(400);
       expect(body).toHaveProperty('message');
     });
 

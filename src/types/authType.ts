@@ -7,24 +7,34 @@ export declare class AuthControllerInterface {
   static logout(req: Request, res: Response): Promise<void>;
 }
 
+const ValidationMessages = {
+  RequiredEmail: 'Email is required',
+  EmptyEmail: 'Email cannot be empty',
+  InvalidEmail: 'Invalid email',
+  RequiredPassword: 'Password is required',
+  EmptyPassword: 'Password cannot be empty',
+  RequiredCompanyName: 'Company name is required',
+  EmptyCompanyName: 'Company name cannot be empty',
+};
+
 export const validateAuthLogin = z.object({
   email: z
-    .string({ required_error: 'Email is required' })
+    .string({ required_error: ValidationMessages.RequiredEmail })
     .trim()
-    .min(1, 'Email cannot be empty')
-    .email('Invalid email'),
+    .min(1, ValidationMessages.EmptyEmail)
+    .email(ValidationMessages.InvalidEmail),
   password: z
-    .string({ required_error: 'Password is required' })
+    .string({ required_error: ValidationMessages.RequiredPassword })
     .trim()
-    .min(1, 'Password cannot be empty'),
+    .min(1, ValidationMessages.EmptyPassword),
 });
 
 export const validateAuthRegister = validateAuthLogin.merge(
   z.object({
     companyName: z
-      .string({ required_error: 'Company name is required' })
+      .string({ required_error: ValidationMessages.RequiredCompanyName })
       .trim()
-      .min(1, 'Company name cannot be empty'),
+      .min(1, ValidationMessages.EmptyCompanyName),
   }),
 );
 

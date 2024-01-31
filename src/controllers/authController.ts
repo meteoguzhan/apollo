@@ -15,32 +15,24 @@ export default class AuthController implements AuthControllerInterface {
       const { email, password, companyName }: AuthRequest = req.body as AuthRequest;
 
       const isUser = await UserModel.findOne({ email });
-      if (isUser) {
-        return sendErrorResponse(res, 1003);
-      }
+      if (isUser) return sendErrorResponse(res, 1003);
 
       const isCompany = await UserModel.findOne({ companyName });
-      if (isCompany) {
-        return sendErrorResponse(res, 1004);
-      }
+      if (isCompany) return sendErrorResponse(res, 1004);
 
-      const hashedPassword: string = await bcrypt.hash(password, 10);
-      const user = new UserModel({
-        email,
-        password: hashedPassword,
-        companyName,
-      });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new UserModel({ email, password: hashedPassword, companyName });
 
       await user.save();
 
-      const token: string | false = authService.generateToken(user);
-      if (!token) {
-        return sendErrorResponse(res, 2001);
-      }
+      const token = authService.generateToken(user);
+      if (!token) return sendErrorResponse(res, 2001);
 
       const loginResponse: LoginAndRegisterResponse = { token };
       return sendSuccessResponse(res, 1000, loginResponse);
     } catch (error) {
+      // Log detailed error information for debugging
+      console.error(error);
       return sendErrorResponse(res, 5000);
     }
   };
@@ -57,14 +49,14 @@ export default class AuthController implements AuthControllerInterface {
         return sendErrorResponse(res, 1002);
       }
 
-      const token: string | false = authService.generateToken(user);
-      if (!token) {
-        return sendErrorResponse(res, 2001);
-      }
+      const token = authService.generateToken(user);
+      if (!token) return sendErrorResponse(res, 2001);
 
       const loginResponse: LoginAndRegisterResponse = { token };
       return sendSuccessResponse(res, 1001, loginResponse);
     } catch (error) {
+      // Log detailed error information for debugging
+      console.error(error);
       return sendErrorResponse(res, 5000);
     }
   };
@@ -73,6 +65,8 @@ export default class AuthController implements AuthControllerInterface {
     try {
       return sendSuccessResponse(res, 1002);
     } catch (error) {
+      // Log detailed error information for debugging
+      console.error(error);
       return sendErrorResponse(res, 5000);
     }
   };
