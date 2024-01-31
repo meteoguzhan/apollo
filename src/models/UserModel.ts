@@ -1,18 +1,16 @@
-import mongoose, { Document, Schema } from "mongoose"
+import mongoose, { Schema } from 'mongoose';
+import { z } from 'zod';
+import { UserWithId } from '../types/authType';
 
-export interface UserModel extends Document {
-    email: string
-    password: string
-    companyName: string
-}
+export type UserInterface = z.infer<typeof UserWithId>;
 
 export const UserSchema = new Schema(
-    {
-        email: { type: String, required: true },
-        password: { type: String, required: true },
-        companyName: { type: String, required: true }
-    },
-    { timestamps: { createdAt: true, updatedAt: true }, versionKey: false }
-)
+  {
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    companyName: { type: String, required: true },
+  },
+  { timestamps: { createdAt: true, updatedAt: true }, versionKey: false },
+);
 
-export const UserModel = mongoose.model<UserModel>("User", UserSchema)
+export const UserModel = mongoose.model<UserInterface>('User', UserSchema);

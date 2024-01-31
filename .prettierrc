@@ -1,17 +1,5 @@
 {
-  "arrowParens": "always",
-  "bracketSameLine": true,
-  "bracketSpacing": true,
-  "embeddedLanguageFormatting": "auto",
-  "endOfLine": "lf",
-  "insertPragma": false,
-  "printWidth": 300,
-  "proseWrap": "preserve",
-  "quoteProps": "as-needed",
-  "requirePragma": false,
-  "semi": false,
-  "singleQuote": false,
-  "tabWidth": 4,
-  "trailingComma": "none",
-  "useTabs": false
+  "printWidth": 100,
+  "singleQuote": true,
+  "trailingComma": "all"
 }

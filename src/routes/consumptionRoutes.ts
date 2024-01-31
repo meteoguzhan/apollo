@@ -1,9 +1,13 @@
-import express, { Router } from "express"
-import { authenticate } from "../middleware/authMiddleware"
-import ConsumptionController from "../controllers/consumptionController"
+import express, { Router } from 'express';
+import AuthMiddleware from '../middleware/authMiddleware';
+import ConsumptionController from '../controllers/consumptionController';
 
-const indexRouter: Router = express.Router()
+export function useConsumptionRouter() {
+  const consumptionRouter: Router = express.Router();
+  const authMiddleware: AuthMiddleware = new AuthMiddleware();
+  const consumptionController: ConsumptionController = new ConsumptionController();
 
-indexRouter.get("/", authenticate, ConsumptionController.index)
+  consumptionRouter.get('/', [authMiddleware.authenticate], consumptionController.index);
 
-export default indexRouter
+  return consumptionRouter;
+}

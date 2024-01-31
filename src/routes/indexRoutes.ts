@@ -1,10 +1,24 @@
-import express, { Router } from "express"
-import IndexController from "../controllers/indexController"
-import { authenticate } from "../middleware/authMiddleware"
+import express, { Router } from 'express';
+import IndexController from '../controllers/indexController';
+import AuthMiddleware from '../middleware/authMiddleware';
+import { validate } from '../middleware/validateMiddleware';
+import { validateCreateIndex, validateDeleteIndex } from '../types/indexType';
 
-const indexRouter: Router = express.Router()
+export function useIndexRouter() {
+  const indexRouter: Router = express.Router();
+  const authMiddleware: AuthMiddleware = new AuthMiddleware();
+  const indexController: IndexController = new IndexController();
 
-indexRouter.post("/", authenticate, IndexController.create)
-indexRouter.delete("/", authenticate, IndexController.delete)
+  indexRouter.post(
+    '/',
+    [authMiddleware.authenticate, validate(validateCreateIndex)],
+    indexController.create,
+  );
+  indexRouter.delete(
+    '/',
+    [authMiddleware.authenticate, validate(validateDeleteIndex)],
+    indexController.delete,
+  );
 
-export default indexRouter
+  return indexRouter;
+}
