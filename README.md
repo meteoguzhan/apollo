@@ -27,6 +27,10 @@ MONGO_URI="link+collection"
 PRIVATE_KEY="Apollo"
 PORT=3000
 </pre>
+You can test the project.
+```bash
+npm run test
+```
 You can start the project. (Make sure your system exists nodemon)
 ```bash
 npm run dev
